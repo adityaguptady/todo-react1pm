@@ -1,7 +1,10 @@
 //Development branch
 import './App.css';
-import { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TodoListItem from './TodoListItem';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Button } from '@mui/base';
+import { blue } from '@mui/material/colors';
 
 var count = 1
 
@@ -158,28 +161,45 @@ var count = 1
 //     </div>
 //   );
 // }
-
+var todoCount = 0
 function App() 
 {
   //var todo = []
-  const [todo, setTodo] = useState([
-    {
-      id: count++,
-      text: "ABC",
-      completed: false},
-    {
-      id: count++,
-      text: "DEF",
-      completed: false},
-    {
-      id: count++,
-      text: "wert",
-      completed: false},
-    {
-      id: count++,
-      text: "jhgf",
-      completed: true}
-  ])
+  const [open, setOpen] = useState(false);
+  
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const INCOMPLETE = "incomplete"
+  const COMPLETED = "completed"
+  const ALL = "all"
+
+  const [filter, setFilter] = useState(INCOMPLETE)
+
+  const [todo, setTodo] = useState([])
+  //   {
+  //     id: count++,
+  //     text: "ABC",
+  //     completed: false},
+  //   {
+  //     id: count++,
+  //     text: "DEF",
+  //     completed: false},
+  //   {
+  //     id: count++,
+  //     text: "wert",
+  //     completed: false},
+  //   {
+  //     id: count++,
+  //     text: "jhgf",
+  //     completed: true}
+  // ])
   const [editingFlag, setEditingFlag] = useState(-1)
 
   const inssertDefaultValue = () =>
@@ -202,6 +222,12 @@ function App()
   //   inssertDefaultValue()
 
   //function to add todo to the array
+  const openDialog = () =>
+  {
+    console.log("addTodo")
+    handleClickOpen();
+  }
+
   const addTodo = () =>
   {
     console.log("addTodo")
@@ -219,9 +245,9 @@ function App()
     setTodo([...todo]) // => setTodo(["Todo 1", "Todo 2"])
     console.log(todo)
     document.getElementById("todoInput").value = ""
+    handleClose();
 
-
-    //mocking todo array for map loop
+    // mocking todo array for map loop
     // console.log("----------------------")
     // const myUpdatedArray = todo.map((todoTemp)=>
     // {
@@ -284,28 +310,194 @@ function App()
     setEditingFlag(-1)
   }
 
-  console.log(todo)
+  const handleFilter = (filter) =>
+  {
+    console.log("handleFilter")
+    switch(filter)
+    {
+      case INCOMPLETE:
+        console.log("incomplete")
+        console.log("todoCount", todoCount)
+        todoCount= 0
+        todo.map(todoTemp => 
+          {
+            if(!todoTemp.completed)
+            {
+              todoCount+=1
+            }
+          })
+        console.log("todoCount", todoCount)
+        setFilter(INCOMPLETE)
+        break;
+      case COMPLETED:
+        console.log("completed")
+        todoCount= 0
+        todo.map(todoTemp => 
+          {
+            if(todoTemp.completed)
+            {
+              todoCount+=1
+            }
+          })
+        setFilter(COMPLETED)
+        break;
+      case ALL:
+        console.log("all")
+        todoCount = todo.length
+        setFilter(ALL)
+        break;
+      default:
+        console.log("default")
+    }
+  }
+  
+  useMemo(()=>
+  {
+    // console.log("todoCount in useeffect", todoCount)
+    // todoCount = 0
+    // todo.map(todoTemp => 
+    //   {
+    //     if(!todoTemp.completed)
+    //     {
+    //       todoCount+=1
+    //     }
+    //   })
+    // console.log("todoCount in useeffect", todoCount)
+    handleFilter("incomplete")
+  }, [])
+
+  const getTodoCount = () =>
+  {
+    return todoCount
+  }
+
+  //console.log(todo)
   return (
     <div>
       <h1>Todo App</h1>
       <div>
-        <input
+        <div>
+          Total To-do Count: {getTodoCount()}
+          {console.log("todoCount", getTodoCount())}
+        </div>
+        <div>
+          {filter === INCOMPLETE ? 
+            <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("incomplete")}><b>Incomplete</b>   </label> :
+            <label style={{margin: "50px"}}onClick={()=> handleFilter("incomplete")}>Incomplete   </label>
+          }
+          {filter === COMPLETED ? 
+            <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("completed")}><b>Completed</b>     </label> :
+            <label style={{margin: "50px"}} onClick={()=> handleFilter("completed")}>Completed    </label>
+          }
+          {filter === ALL ? 
+            <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("all")}><b>All</b>    </label> :
+            <label style={{margin: "50px"}} onClick={()=> handleFilter("all")}>All    </label>
+          }
+          
+          
+        </div>
+        {
+          todo.length === 0 ? 
+          <label>No To-dos added yet<br/></label> :
+          <div></div>
+        }
+        <div>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              component: 'form',
+              // onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+              //   event.preventDefault();
+              //   const formData = new FormData(event.currentTarget);
+              //   const formJson = Object.fromEntries((formData as any).entries());
+              //   const email = formJson.email;
+              //   console.log(email);
+              //   handleClose();
+              // },
+            }}
+          >
+            <DialogTitle>Add new To-do</DialogTitle>
+            <DialogContent>
+              {/* <DialogContentText>
+                To subscribe to this website, please enter your email address here. We
+                will send updates occasionally.
+              </DialogContentText> */}
+              <TextField
+                autoFocus
+                required
+                margin="dense"
+                id="todoInput"
+                name="todo"
+                label="To-do"
+                type="text"
+                fullWidth
+                variant="standard"
+              />
+            </DialogContent>
+            <DialogActions>
+              
+              <Button style={{backgroundColor:blue}} onClick={addTodo}>Add todo</Button>
+              <Button onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        {/* <input
           id='todoInput'
           type='text'
           placeholder='Enter todo here'
-        />
-        <button onClick={addTodo}>Add todo</button>
+        /> */}
+        <button onClick={openDialog}>Add todo</button>
       </div>
+      {/* {todoCount = 0} */}
       {todo.map((todoTemp)=>
       {
-        return <TodoListItem 
-            todoObject={todoTemp} 
-            checkedChange={checkedChange}
-            deleteTodo={deleteTodo}
-            saveTodo={saveTodo}
-            editingTodo={editingTodo}
-            editingFlag={editingFlag}
-          />
+        let returnComponent
+        
+        switch(filter)
+        {
+          case INCOMPLETE:
+            if(!todoTemp.completed)
+            {
+              returnComponent = <TodoListItem
+                key={todoTemp.id}
+                todoObject={todoTemp} 
+                checkedChange={checkedChange}
+                deleteTodo={deleteTodo}
+                saveTodo={saveTodo}
+                editingTodo={editingTodo}
+                editingFlag={editingFlag}
+              />
+            }            
+            break;
+          case COMPLETED:
+            if(todoTemp.completed)
+            {
+              returnComponent = <TodoListItem
+                key={todoTemp.id}
+                todoObject={todoTemp} 
+                checkedChange={checkedChange}
+                deleteTodo={deleteTodo}
+                saveTodo={saveTodo}
+                editingTodo={editingTodo}
+                editingFlag={editingFlag}
+              />
+            }     
+            break;
+          case ALL:
+            returnComponent = <TodoListItem
+                key={todoTemp.id}
+                todoObject={todoTemp} 
+                checkedChange={checkedChange}
+                deleteTodo={deleteTodo}
+                saveTodo={saveTodo}
+                editingTodo={editingTodo}
+                editingFlag={editingFlag}
+              />
+            break;
+          default:
+        }
+        return returnComponent
       })}
     </div>
   );
