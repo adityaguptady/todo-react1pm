@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+body
+{
+  background: linear-gradient(180deg, #E4C2FF,#FFFFFF);
+  background-attachment: fixed;
+}
+
+#container
+{
+  display: 'flex';
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #61dafb;
+}

@@ -373,34 +373,49 @@ function App()
 
   //console.log(todo)
   return (
-    <div>
-      <h1>Todo App</h1>
-      <div>
-        <div>
-          Total To-do Count: {getTodoCount()}
-          {console.log("todoCount", getTodoCount())}
+    <div >
+      <h1 style={{textAlign: "center"}}>Todo App</h1>
+      {
+            todo.length > 0 ? 
+            <>
+              <div style={{textAlign: "center"}}>
+                <div style={{margin: "12px", display: "inline-block"}}>
+                  Total To-do Count: {getTodoCount()}
+                </div>
+                <div style={{width: "80%",textAlign: "center", margin: "12px", display: "inline-block"}}>
+                  {filter === INCOMPLETE ? 
+                    <label style={{backgroundColor: "#BCBCBD", margin: "15px"}} onClick={()=> handleFilter("incomplete")}><b>Incomplete</b>   </label> :
+                    <label style={{margin: "50px"}}onClick={()=> handleFilter("incomplete")}>Incomplete   </label>
+                  }
+                  {filter === COMPLETED ? 
+                    <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("completed")}><b>Completed</b>     </label> :
+                    <label style={{margin: "50px"}} onClick={()=> handleFilter("completed")}>Completed    </label>
+                  }
+                  {filter === ALL ? 
+                    <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("all")}><b>All</b>    </label> :
+                    <label style={{margin: "50px"}} onClick={()=> handleFilter("all")}>All    </label>
+                  }
+                </div>
+                <div style={{margin: "12px", display: "inline-block"}}>
+                  <button onClick={openDialog}>Add todo</button>
+                </div>
+              </div>
+            </> :
+            <div></div>
+          }
+      <div style={{textAlign: "center", height: "100vh",verticalAlign: "middle"}}>
+        {/* vertical-align: middle */}
+        <div style={{textAlign: "center", height: "100vh", backgroundColor: "#008877", verticalAlign: "middle" }}>
+          {
+            todo.length === 0 ? 
+            <div style={{textAlign: "center", backgroundColor: "#228877", verticalAlign: "middle" }}>
+              <label style={{textAlign: "center"}}>No To-dos added yet<br/></label> 
+              <button onClick={openDialog}>Add todo</button>
+            </div> :
+            <div></div>
+          }
         </div>
-        <div>
-          {filter === INCOMPLETE ? 
-            <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("incomplete")}><b>Incomplete</b>   </label> :
-            <label style={{margin: "50px"}}onClick={()=> handleFilter("incomplete")}>Incomplete   </label>
-          }
-          {filter === COMPLETED ? 
-            <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("completed")}><b>Completed</b>     </label> :
-            <label style={{margin: "50px"}} onClick={()=> handleFilter("completed")}>Completed    </label>
-          }
-          {filter === ALL ? 
-            <label style={{backgroundColor: "#BCBCBD", margin: "50px"}} onClick={()=> handleFilter("all")}><b>All</b>    </label> :
-            <label style={{margin: "50px"}} onClick={()=> handleFilter("all")}>All    </label>
-          }
-          
-          
-        </div>
-        {
-          todo.length === 0 ? 
-          <label>No To-dos added yet<br/></label> :
-          <div></div>
-        }
+        
         <div>
           <Dialog
             open={open}
@@ -447,7 +462,7 @@ function App()
           type='text'
           placeholder='Enter todo here'
         /> */}
-        <button onClick={openDialog}>Add todo</button>
+        {/* <button onClick={openDialog}>Add todo</button> */}
       </div>
       {/* {todoCount = 0} */}
       {todo.map((todoTemp)=>
