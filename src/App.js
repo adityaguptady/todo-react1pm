@@ -220,7 +220,7 @@ function App()
             <>
               <div style={{textAlign: "center"}}>
                 <div style={{margin: "6px", display: "inline-block"}}>
-                  Total To-do Count: {getTodoCount()}
+                  Total To-do Count---: {getTodoCount()}
                 </div>
                 <div style={{width: "60%",textAlign: "center", margin: "12px", display: "inline-block"}}>
                   {filter === INCOMPLETE ? 
